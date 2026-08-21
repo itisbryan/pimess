@@ -1,13 +1,18 @@
 #!/usr/bin/env node
-import { config, savePimessConfig } from "../src/config.mjs";
+import { fileURLToPath } from "node:url";
+import { config, isTransportConfigured, savePimessConfig } from "../src/config.mjs";
 import { initializeChat, validateRecipient } from "../src/init.mjs";
 import { ImsgRpc } from "../src/imsg-rpc.mjs";
+import { PhotonTransport } from "../src/photon.mjs";
 import { PimessRouter } from "../src/router.mjs";
 
 const command = process.argv[2];
 const settings = config();
 
 async function initChat(recipient) {
+  if (settings.transport === "photon") {
+    throw new Error("Photon does not use /pimess init; set PHOTON_PROJECT_ID, PHOTON_PROJECT_SECRET, and PHOTON_TARGET");
+  }
   if (!validateRecipient(recipient)) {
     throw new Error("recipient must be an E.164 phone number or Apple ID email");
   }
@@ -33,21 +38,32 @@ if (command === "init") {
     process.exitCode = 1;
   }
 } else if (command === "router") {
-  if (settings.chatId == null) {
-    console.error("pimess: set PIMESS_CHAT_ID or run 'pimess init <recipient>' first");
+  if (!isTransportConfigured(settings)) {
+    console.error(settings.transport === "photon"
+      ? "pimess: set PHOTON_PROJECT_ID, PHOTON_PROJECT_SECRET, and PHOTON_TARGET"
+      : "pimess: set PIMESS_CHAT_ID or run 'pimess init <recipient>' first");
     process.exit(2);
   }
 
-  const transport = new ImsgRpc({
-    command: process.env.PIMESS_IMSG || "imsg",
-    chatId: settings.chatId,
-    to: settings.to,
-  });
+  const photonDir = settings.photonDir || fileURLToPath(new URL("../photon", import.meta.url));
+  const transport = settings.transport === "photon"
+    ? new PhotonTransport({
+        projectId: settings.projectId,
+        projectSecret: settings.projectSecret,
+        target: settings.target,
+        port: settings.photonPort,
+        sidecarDir: photonDir,
+      })
+    : new ImsgRpc({
+        command: process.env.PIMESS_IMSG || "imsg",
+        chatId: settings.chatId,
+        to: settings.to,
+      });
   const router = new PimessRouter({
     transport,
     socketPath: settings.socketPath,
     statePath: settings.statePath,
-    chatId: settings.chatId,
+    chatId: settings.transport === "photon" ? settings.target : settings.chatId,
   });
 
   try {

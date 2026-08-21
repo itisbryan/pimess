@@ -10,8 +10,14 @@ export function formatOutbound(alias, text) {
   return `[${alias}] ${text}`;
 }
 
+function sameChat(messageChatId, configuredChatId) {
+  if (String(messageChatId) === String(configuredChatId)) return true;
+  const configured = String(configuredChatId || "");
+  return /^\+\d{6,}$/.test(configured) && String(messageChatId) === `any;-;${configured}`;
+}
+
 export function routeInbound(message, { sessions, records, chatId }) {
-  if (chatId != null && Number(message.chat_id) !== Number(chatId)) {
+  if (chatId != null && !sameChat(message.chat_id, chatId)) {
     return { kind: "ignore" };
   }
 
