@@ -12,6 +12,21 @@ function sleep(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+function runInit(recipient: string) {
+  return new Promise<{ code: number | null; stdout: string; stderr: string }>((resolve, reject) => {
+    const child = spawn(process.execPath, [routerEntry, "init", recipient], {
+      env: process.env,
+      stdio: ["ignore", "pipe", "pipe"],
+    });
+    let stdout = "";
+    let stderr = "";
+    child.stdout?.on("data", (chunk) => { stdout += chunk; });
+    child.stderr?.on("data", (chunk) => { stderr += chunk; });
+    child.once("error", reject);
+    child.once("close", (code) => resolve({ code, stdout, stderr }));
+  });
+}
+
 function assistantText(ctx: ExtensionContext): string | null {
   const entries = ctx.sessionManager.getBranch() as Array<any>;
   for (let index = entries.length - 1; index >= 0; index -= 1) {
@@ -26,7 +41,7 @@ function assistantText(ctx: ExtensionContext): string | null {
 }
 
 export default function pimess(pi: ExtensionAPI) {
-  const settings = config();
+  let settings = config();
   let client: PimessClient | null = null;
   let alias = settings.alias;
   let enabled = /^(1|true|yes|on)$/i.test(process.env.PIMESS_ENABLED || "");
@@ -125,6 +140,18 @@ export default function pimess(pi: ExtensionAPI) {
     handler: async (args, ctx) => {
       const [command, value] = (args || "").trim().split(/\s+/, 2);
       try {
+        if (command === "init") {
+          if (!value) throw new Error("usage: /pimess init <phone-or-apple-id>");
+          const ok = await ctx.ui.confirm("Initialize iMessage chat?", `Recipient: ${value}`);
+          if (!ok) return;
+          const result = await runInit(value);
+          if (result.code !== 0) throw new Error(result.stderr.trim() || result.stdout.trim() || "chat initialization failed");
+          settings = config();
+          client?.close();
+          client = null;
+          ctx.ui.notify(result.stdout.trim() || "pimess chat initialized; run /pimess on", "info");
+          return;
+        }
         if (command === "alias") {
           if (!value) throw new Error("usage: /pimess alias <name>");
           alias = value.toLowerCase();

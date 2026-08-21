@@ -31,7 +31,8 @@ The Pi extension is a client of the router. It registers the current session, ex
 - Safe handling of unthreaded ambiguous replies.
 - Persistent routing state across router restarts.
 - Session liveness/expiry so dead sessions are not selected.
-- Pi commands for status, alias, enable, and disable.
+- Pi commands for status, initialization, alias, enable, and disable.
+- Explicit initialization that creates or locates a recipient chat and persists its chat ID.
 - Tests that do not require a live Messages.app account.
 
 ### Out of scope for the first release
@@ -120,12 +121,13 @@ The router strips the control alias from the prompt delivered to Pi but preserve
 
 ```text
 /pimess status
+/pimess init <phone-or-apple-id>
 /pimess alias <name>
 /pimess on
 /pimess off
 ```
 
-`on` enables the current session to receive routed messages and, only when explicitly configured, forward settled assistant replies. `off` unregisters delivery without deleting routing history. `status` shows the router, current alias, active sessions, configured chats, and transport health without displaying message contents.
+`init` requires explicit user confirmation, creates or locates the recipient conversation through `imsg rpc`, and persists `{chatId, recipient}` under `~/.pi/agent/pimess/config.json`. It may require `imsg launch` when the installed `imsg` exposes chat creation only through its bridge. `on` enables the current session to receive routed messages and, only when explicitly configured, forward settled assistant replies. `off` unregisters delivery without deleting routing history. `status` shows the router, current alias, active sessions, configured chats, and transport health without displaying message contents.
 
 ### Failure behavior
 
@@ -147,15 +149,16 @@ The router strips the control alias from the prompt delivered to Pi but preserve
 
 ## Acceptance
 
-1. Two Pi sessions can register as `api` and `docs` simultaneously.
-2. Each outbound message visibly identifies its alias and creates a routing record.
-3. An inline reply to an `api` message is delivered only to `api`.
-4. `docs: update the README` is delivered only to `docs`.
-5. An unthreaded message with multiple active sessions produces a disambiguation response and invokes no agent.
-6. A message targeting an offline alias reports that alias offline and does not invoke another session.
-7. Router restart preserves routing records and active configuration safely.
-8. Router and extension tests cover registration, duplicate aliases, reply-GUID routing, alias parsing, ambiguity refusal, stale sessions, and bounded persistence.
-9. The package can be loaded by Pi through its `pi` manifest and extension discovery without modifying Pi core.
+1. `/pimess init <recipient>` creates or locates the recipient chat after confirmation and persists its chat ID.
+2. Two Pi sessions can register as `api` and `docs` simultaneously.
+3. Each outbound message visibly identifies its alias and creates a routing record.
+4. An inline reply to an `api` message is delivered only to `api`.
+5. `docs: update the README` is delivered only to `docs`.
+6. An unthreaded message with multiple active sessions produces a disambiguation response and invokes no agent.
+7. A message targeting an offline alias reports that alias offline and does not invoke another session.
+8. Router restart preserves routing records and active configuration safely.
+9. Router and extension tests cover registration, duplicate aliases, reply-GUID routing, alias parsing, ambiguity refusal, stale sessions, and bounded persistence.
+10. The package can be loaded by Pi through its `pi` manifest and extension discovery without modifying Pi core.
 
 ## Open questions
 

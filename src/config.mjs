@@ -1,18 +1,41 @@
 import os from "node:os";
-import { basename, join } from "node:path";
+import { existsSync, mkdirSync, readFileSync, renameSync, writeFileSync } from "node:fs";
+import { basename, dirname, join } from "node:path";
 
 const agentDir = process.env.PI_CODING_AGENT_DIR || join(os.homedir(), ".pi", "agent");
 const stateDir = join(agentDir, "pimess");
+const configPath = join(stateDir, "config.json");
+
+export function loadPimessConfig(file = configPath) {
+  try {
+    const value = JSON.parse(readFileSync(file, "utf8"));
+    if (!Number.isInteger(value.chatId) || value.chatId <= 0) return {};
+    return {
+      chatId: value.chatId,
+      ...(typeof value.recipient === "string" && value.recipient ? { recipient: value.recipient } : {}),
+    };
+  } catch {
+    return {};
+  }
+}
+
+export function savePimessConfig(file, value) {
+  mkdirSync(dirname(file), { recursive: true, mode: 0o700 });
+  const temporary = `${file}.${process.pid}.tmp`;
+  writeFileSync(temporary, `${JSON.stringify(value, null, 2)}\n`, { encoding: "utf8", mode: 0o600 });
+  renameSync(temporary, file);
+}
 
 export function config() {
-  const chatId = process.env.PIMESS_CHAT_ID;
+  const saved = loadPimessConfig();
+  const envChatId = Number(process.env.PIMESS_CHAT_ID);
   return {
     alias: process.env.PIMESS_ALIAS || basename(process.cwd()).toLowerCase().replace(/[^a-z0-9_-]/g, "-").slice(0, 32) || "pi",
-    chatId: chatId ? Number(chatId) : null,
-    to: process.env.PIMESS_TO || null,
+    chatId: Number.isInteger(envChatId) && envChatId > 0 ? envChatId : saved.chatId || null,
+    to: process.env.PIMESS_TO || saved.recipient || null,
+    configPath,
     socketPath: process.env.PIMESS_SOCKET || join(stateDir, "router.sock"),
     statePath: process.env.PIMESS_STATE || join(stateDir, "state.json"),
-    routerPath: join(stateDir, "router.pid"),
     forwardSettled: /^(1|true|yes|on)$/i.test(process.env.PIMESS_FORWARD_SETTLED || ""),
   };
 }

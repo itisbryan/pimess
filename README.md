@@ -7,7 +7,7 @@ A Pi extension and local router for sending and receiving iMessages across multi
 - macOS 14+
 - Pi
 - [`imsg`](https://github.com/openclaw/imsg) installed and authorized for Messages.app
-- A configured iMessage chat ID
+- Messages.app signed in with the recipient available
 
 ## Install
 
@@ -15,20 +15,22 @@ A Pi extension and local router for sending and receiving iMessages across multi
 pi install git:github.com/itisbryan/pimess
 ```
 
-Configure the chat to watch and send to:
+Start Pi with the extension and initialize a dedicated recipient chat:
 
 ```bash
-export PIMESS_CHAT_ID=42
 export PIMESS_ALIAS=api
+pi -e /path/to/pimess/src/extension.ts
 ```
 
-Find chat IDs with:
+Inside Pi, explicitly approve the recipient:
 
-```bash
-imsg chats --json
+```text
+/pimess init +15551234567
 ```
 
-Start Pi and enable this session:
+`pimess` creates or locates the Messages conversation and persists the resulting chat ID under `~/.pi/agent/pimess/config.json`. If the installed `imsg` requires the bridge for chat creation, run `imsg launch` once first. You can also configure an existing chat manually with `PIMESS_CHAT_ID=42`.
+
+Then enable this session:
 
 ```text
 /pimess on
@@ -45,6 +47,7 @@ Use a different alias in another Pi session:
 
 ```text
 /pimess status
+/pimess init <phone-or-apple-id>
 /pimess alias <name>
 /pimess on
 /pimess off

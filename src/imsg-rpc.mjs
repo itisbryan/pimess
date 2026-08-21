@@ -12,7 +12,7 @@ export class ImsgRpc {
     this.onMessage = () => {};
   }
 
-  async start(onMessage) {
+  async start(onMessage, { watch = true } = {}) {
     this.onMessage = onMessage;
     this.child = spawn(this.command, ["rpc"], { stdio: ["pipe", "pipe", "ignore"] });
     this.child.stdout.setEncoding("utf8");
@@ -20,10 +20,12 @@ export class ImsgRpc {
     this.child.on("error", (error) => this.#fail(error));
     this.child.on("close", (code) => this.#fail(new Error(`imsg rpc exited (${code ?? "unknown"})`)));
     await this.request("initialize", {});
-    await this.request("watch.subscribe", {
-      ...(this.chatId == null ? {} : { chat_id: this.chatId }),
-      debounce_ms: 500,
-    });
+    if (watch) {
+      await this.request("watch.subscribe", {
+        ...(this.chatId == null ? {} : { chat_id: this.chatId }),
+        debounce_ms: 500,
+      });
+    }
   }
 
   async send(text) {
