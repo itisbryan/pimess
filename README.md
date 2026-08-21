@@ -1,53 +1,66 @@
 # pimess
 
-A Pi extension and local router for sending and receiving iMessages across multiple Pi sessions.
+A Pi extension and shared local router for sending and receiving iMessages across multiple Pi sessions.
 
-## Requirements
+## Transport
 
-- macOS 14+
-- Pi
-- [`imsg`](https://github.com/openclaw/imsg) installed and authorized for Messages.app
-- Messages.app signed in with the recipient available
+`pimess` uses **Photon/Spectrum by default**, so PiMess has its own iMessage identity instead of appearing as a self-chat.
 
-## Install
+Photon setup requires:
+
+- A Photon project with Spectrum enabled.
+- `PHOTON_PROJECT_ID`.
+- `PHOTON_PROJECT_SECRET`.
+- The Photon-assigned iMessage line.
+- The recipient’s phone number or Photon space as `PHOTON_TARGET`.
+- The recipient must text the assigned Photon line first when using a shared/free line.
+
+Configure the environment before starting Pi:
+
+```bash
+export PHOTON_PROJECT_ID="..."
+export PHOTON_PROJECT_SECRET="..."
+export PHOTON_TARGET="+15551234567"
+export PIMESS_ALIAS=api
+```
+
+Install the extension directly without installing it into Pi:
+
+```bash
+cd /Users/itisbryan/Desktop/personal/pimess
+npm install
+pi -e ./src/extension.ts
+```
+
+Or install it as a Pi package:
 
 ```bash
 pi install git:github.com/itisbryan/pimess
 ```
 
-Start Pi with the extension and initialize a dedicated recipient chat:
+Then enable the session:
+
+```text
+/pimess on
+```
+
+Photon runs a supervised Node sidecar using the pinned `spectrum-ts` dependency. No local Messages.app account, SIP changes, or `imsg launch` are required for Photon.
+
+### Local `imsg` fallback
+
+To use the Mac’s own Messages.app account instead:
 
 ```bash
-export PIMESS_ALIAS=api
-pi -e /path/to/pimess/src/extension.ts
+export PIMESS_TRANSPORT=imsg
+export PIMESS_CHAT_ID=42
 ```
 
-Inside Pi, explicitly approve the recipient:
-
-```text
-/pimess init +15551234567
-```
-
-`pimess` sends a normal iMessage to create or locate the Messages conversation, then persists the resulting chat ID under `~/.pi/agent/pimess/config.json`. This does not require `imsg launch`, SIP changes, or private framework injection. You can also configure an existing chat manually with `PIMESS_CHAT_ID=42`.
-
-Then enable this session:
-
-```text
-/pimess on
-```
-
-Use a different alias in another Pi session:
-
-```text
-/pimess alias docs
-/pimess on
-```
+Then start Pi and use `/pimess on`. This mode requires `imsg` and Messages.app permissions and appears as the Mac account, not a separate PiMess identity.
 
 ## Commands
 
 ```text
 /pimess status
-/pimess init <phone-or-apple-id>
 /pimess alias <name>
 /pimess on
 /pimess off
@@ -58,7 +71,7 @@ Use a different alias in another Pi session:
 
 ## Routing
 
-- Inline iMessage replies use `reply_to_guid` to return to the exact Pi session.
+- Inline replies use the originating message GUID when Photon provides it.
 - Explicit messages such as `api: fix the failing test` route by alias.
 - A plain message routes only when one session is enabled.
 - With multiple enabled sessions, pimess asks for an alias instead of guessing.

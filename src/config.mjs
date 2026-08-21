@@ -30,13 +30,26 @@ export function isChatConfigured(value) {
   return Number.isInteger(value?.chatId) && value.chatId > 0;
 }
 
+export function isTransportConfigured(value) {
+  if (value?.transport === "photon") {
+    return Boolean(value.projectId && value.projectSecret && value.target);
+  }
+  return isChatConfigured(value);
+}
+
 export function config() {
   const saved = loadPimessConfig();
   const envChatId = Number(process.env.PIMESS_CHAT_ID);
   return {
     alias: process.env.PIMESS_ALIAS || basename(process.cwd()).toLowerCase().replace(/[^a-z0-9_-]/g, "-").slice(0, 32) || "pi",
+    transport: (process.env.PIMESS_TRANSPORT || "photon").toLowerCase(),
     chatId: Number.isInteger(envChatId) && envChatId > 0 ? envChatId : saved.chatId || null,
     to: process.env.PIMESS_TO || saved.recipient || null,
+    target: process.env.PHOTON_TARGET || process.env.PHOTON_HOME_CHANNEL || null,
+    projectId: process.env.PHOTON_PROJECT_ID || null,
+    projectSecret: process.env.PHOTON_PROJECT_SECRET || null,
+    photonPort: Number(process.env.PHOTON_SIDECAR_PORT || 8790),
+    photonDir: process.env.PIMESS_PHOTON_DIR || null,
     configPath,
     socketPath: process.env.PIMESS_SOCKET || join(stateDir, "router.sock"),
     statePath: process.env.PIMESS_STATE || join(stateDir, "state.json"),

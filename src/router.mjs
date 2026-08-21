@@ -17,7 +17,7 @@ export class PimessRouter {
     this.transport = transport;
     this.socketPath = socketPath;
     this.statePath = statePath;
-    this.chatId = chatId == null ? null : Number(chatId);
+    this.chatId = chatId == null ? null : chatId;
     this.state = loadState(statePath);
     this.sessions = new Map();
     this.server = null;

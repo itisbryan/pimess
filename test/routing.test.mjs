@@ -21,6 +21,16 @@ test("routes an inline reply by message GUID", () => {
   );
 });
 
+test("routes an inline reply by message GUID", () => {
+  assert.deepEqual(
+    routeInbound(
+      { guid: "reply-photon", chat_id: "any;-;+15551234567", text: "from phone" },
+      { sessions: new Map([["api", { alias: "api", sessionId: "session-api", connected: true }]]), records: new Map(), chatId: "+15551234567" },
+    ),
+    { kind: "deliver", alias: "api", text: "from phone" },
+  );
+});
+
 test("routes an explicit alias prefix", () => {
   assert.deepEqual(parseAlias(" docs: update the README "), {
     alias: "docs",

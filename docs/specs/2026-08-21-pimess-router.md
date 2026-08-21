@@ -21,7 +21,8 @@ The Pi extension is a client of the router. It registers the current session, ex
 ### In scope
 
 - Public Pi package/repository named `pimess`.
-- macOS transport through `imsg rpc`.
+- Photon/Spectrum transport through a supervised Node sidecar by default.
+- Optional local macOS transport through `imsg rpc`.
 - One router process per user/Mac.
 - Pi session registration with a human alias and stable Pi session ID.
 - Outbound text messages labeled with the sending alias.
@@ -37,7 +38,7 @@ The Pi extension is a client of the router. It registers the current session, ex
 
 ### Out of scope for the first release
 
-- Photon or BlueBubbles support.
+- BlueBubbles support.
 - Multiple Macs sharing one router.
 - Group-chat membership management.
 - Bulk messaging.
@@ -56,10 +57,10 @@ Pi extension (one instance per session)
 pimess router (one per Mac)
         │ one supervised child
         ▼
-imsg rpc
+Photon/Spectrum sidecar (default) or imsg rpc
         │
         ▼
-Messages.app / iMessage
+iMessage
 ```
 
 ### Session identity
@@ -127,7 +128,7 @@ The router strips the control alias from the prompt delivered to Pi but preserve
 /pimess off
 ```
 
-`init` requires explicit user confirmation, sends a normal iMessage through `imsg rpc` to create or locate the recipient conversation, and persists `{chatId, recipient}` under `~/.pi/agent/pimess/config.json`. It does not require `imsg launch`, SIP changes, or private framework injection. `on` enables the current session to receive routed messages and, only when explicitly configured, forward settled assistant replies. `off` unregisters delivery without deleting routing history. `status` shows the router, current alias, active sessions, configured chats, and transport health without displaying message contents.
+Photon is configured with `PHOTON_PROJECT_ID`, `PHOTON_PROJECT_SECRET`, and `PHOTON_TARGET`; the Photon sidecar uses the assigned Photon line and does not require local Messages.app or SIP changes. The optional imsg transport retains `/pimess init <phone-or-apple-id>` for creating or locating a local Messages conversation and persisting `{chatId, recipient}` under `~/.pi/agent/pimess/config.json`. That local path does not require `imsg launch`. `on` enables the current session to receive routed messages and, only when explicitly configured, forward settled assistant replies. `off` unregisters delivery without deleting routing history. `status` shows the router, current alias, active sessions, configured chats, and transport health without displaying message contents.
 
 ### Failure behavior
 
@@ -149,7 +150,7 @@ The router strips the control alias from the prompt delivered to Pi but preserve
 
 ## Acceptance
 
-1. `/pimess init <recipient>` creates or locates the recipient chat after confirmation and persists its chat ID.
+1. Photon configuration starts the sidecar with project credentials and a target space; optional imsg initialization creates or locates a local recipient chat after confirmation and persists its chat ID.
 2. Two Pi sessions can register as `api` and `docs` simultaneously.
 3. Each outbound message visibly identifies its alias and creates a routing record.
 4. An inline reply to an `api` message is delivered only to `api`.
