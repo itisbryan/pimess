@@ -11,7 +11,7 @@ const settings = config();
 
 async function initChat(recipient) {
   if (settings.transport === "photon") {
-    throw new Error("Photon does not use /pimess init; set PHOTON_PROJECT_ID, PHOTON_PROJECT_SECRET, and PHOTON_TARGET");
+    throw new Error("Photon does not use /pimess init; set SPECTRUM_PROJECT_ID, SPECTRUM_PROJECT_SECRET, and PHOTON_TARGET");
   }
   if (!validateRecipient(recipient)) {
     throw new Error("recipient must be an E.164 phone number or Apple ID email");
@@ -40,7 +40,7 @@ if (command === "init") {
 } else if (command === "router") {
   if (!isTransportConfigured(settings)) {
     console.error(settings.transport === "photon"
-      ? "pimess: set PHOTON_PROJECT_ID, PHOTON_PROJECT_SECRET, and PHOTON_TARGET"
+      ? "pimess: set SPECTRUM_PROJECT_ID, SPECTRUM_PROJECT_SECRET, and PHOTON_TARGET"
       : "pimess: set PIMESS_CHAT_ID or run 'pimess init <recipient>' first");
     process.exit(2);
   }

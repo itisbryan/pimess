@@ -54,7 +54,7 @@ export default function pimess(pi: ExtensionAPI) {
   async function connect(ctx: ExtensionContext) {
     if (!isTransportConfigured(settings)) {
       throw new Error(settings.transport === "photon"
-        ? "Photon is not configured; set PHOTON_PROJECT_ID, PHOTON_PROJECT_SECRET, and PHOTON_TARGET"
+        ? "Photon is not configured; set SPECTRUM_PROJECT_ID, SPECTRUM_PROJECT_SECRET, and PHOTON_TARGET"
         : "pimess chat is not initialized; run /pimess init <phone-or-apple-id>");
     }
     if (client) return client;
@@ -100,7 +100,7 @@ export default function pimess(pi: ExtensionAPI) {
     project = basename(ctx.cwd);
     if (!isTransportConfigured(settings)) {
       ctx.ui.notify(settings.transport === "photon"
-        ? "Photon is not configured; set PHOTON_PROJECT_ID, PHOTON_PROJECT_SECRET, and PHOTON_TARGET"
+        ? "Photon is not configured; set SPECTRUM_PROJECT_ID, SPECTRUM_PROJECT_SECRET, and PHOTON_TARGET"
         : "pimess is not initialized; run /pimess init <phone-or-apple-id>", "info");
       return;
     }
@@ -167,7 +167,7 @@ export default function pimess(pi: ExtensionAPI) {
         }
         if (command === "status" && !isTransportConfigured(settings)) {
           ctx.ui.notify(settings.transport === "photon"
-            ? "Photon is not configured; set PHOTON_PROJECT_ID, PHOTON_PROJECT_SECRET, and PHOTON_TARGET"
+            ? "Photon is not configured; set SPECTRUM_PROJECT_ID, SPECTRUM_PROJECT_SECRET, and PHOTON_TARGET"
             : "pimess is not initialized; run /pimess init <phone-or-apple-id>", "info");
           return;
         }

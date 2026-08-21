@@ -2,14 +2,14 @@ import crypto from "node:crypto";
 import http from "node:http";
 import { once } from "node:events";
 
-const projectId = process.env.PHOTON_PROJECT_ID;
-const projectSecret = process.env.PHOTON_PROJECT_SECRET;
+const projectId = process.env.SPECTRUM_PROJECT_ID;
+const projectSecret = process.env.SPECTRUM_PROJECT_SECRET;
 const port = Number(process.env.PHOTON_SIDECAR_PORT || 8790);
 const bind = "127.0.0.1";
 const token = process.env.PHOTON_SIDECAR_TOKEN;
 
 if (!projectId || !projectSecret || !token) {
-  console.error("pimess Photon: PHOTON_PROJECT_ID, PHOTON_PROJECT_SECRET, and PHOTON_SIDECAR_TOKEN are required");
+  console.error("pimess Photon: SPECTRUM_PROJECT_ID, SPECTRUM_PROJECT_SECRET, and PHOTON_SIDECAR_TOKEN are required");
   process.exit(2);
 }
 

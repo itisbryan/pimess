@@ -21,8 +21,8 @@ export class PhotonTransport {
     this.child = spawn(process.execPath, [entry], {
       env: {
         ...process.env,
-        PHOTON_PROJECT_ID: this.projectId,
-        PHOTON_PROJECT_SECRET: this.projectSecret,
+        SPECTRUM_PROJECT_ID: this.projectId,
+        SPECTRUM_PROJECT_SECRET: this.projectSecret,
         PHOTON_SIDECAR_PORT: String(this.port),
         PHOTON_SIDECAR_TOKEN: this.token,
         PHOTON_SIDECAR_WATCH_STDIN: "1",

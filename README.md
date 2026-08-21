@@ -9,8 +9,8 @@ A Pi extension and shared local router for sending and receiving iMessages acros
 Photon setup requires:
 
 - A Photon project with Spectrum enabled.
-- `PHOTON_PROJECT_ID`.
-- `PHOTON_PROJECT_SECRET`.
+- `SPECTRUM_PROJECT_ID`.
+- `SPECTRUM_PROJECT_SECRET`.
 - The Photon-assigned iMessage line.
 - The recipient’s phone number or Photon space as `PHOTON_TARGET`.
 - The recipient must text the assigned Photon line first when using a shared/free line.
@@ -18,8 +18,8 @@ Photon setup requires:
 Configure the environment before starting Pi:
 
 ```bash
-export PHOTON_PROJECT_ID="..."
-export PHOTON_PROJECT_SECRET="..."
+export SPECTRUM_PROJECT_ID="..."
+export SPECTRUM_PROJECT_SECRET="..."
 export PHOTON_TARGET="+15551234567"
 export PIMESS_ALIAS=api
 ```

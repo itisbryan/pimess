@@ -128,7 +128,7 @@ The router strips the control alias from the prompt delivered to Pi but preserve
 /pimess off
 ```
 
-Photon is configured with `PHOTON_PROJECT_ID`, `PHOTON_PROJECT_SECRET`, and `PHOTON_TARGET`; the Photon sidecar uses the assigned Photon line and does not require local Messages.app or SIP changes. The optional imsg transport retains `/pimess init <phone-or-apple-id>` for creating or locating a local Messages conversation and persisting `{chatId, recipient}` under `~/.pi/agent/pimess/config.json`. That local path does not require `imsg launch`. `on` enables the current session to receive routed messages and, only when explicitly configured, forward settled assistant replies. `off` unregisters delivery without deleting routing history. `status` shows the router, current alias, active sessions, configured chats, and transport health without displaying message contents.
+Photon is configured with `SPECTRUM_PROJECT_ID`, `SPECTRUM_PROJECT_SECRET`, and `PHOTON_TARGET`; the Photon sidecar uses the assigned Photon line and does not require local Messages.app or SIP changes. The optional imsg transport retains `/pimess init <phone-or-apple-id>` for creating or locating a local Messages conversation and persisting `{chatId, recipient}` under `~/.pi/agent/pimess/config.json`. That local path does not require `imsg launch`. `on` enables the current session to receive routed messages and, only when explicitly configured, forward settled assistant replies. `off` unregisters delivery without deleting routing history. `status` shows the router, current alias, active sessions, configured chats, and transport health without displaying message contents.
 
 ### Failure behavior
 
