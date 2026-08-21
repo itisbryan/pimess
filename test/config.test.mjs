@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { loadPimessConfig, savePimessConfig } from "../src/config.mjs";
+import { isChatConfigured, loadPimessConfig, savePimessConfig } from "../src/config.mjs";
 
 test("persists and reloads the initialized chat", () => {
   const dir = mkdtempSync(join(tmpdir(), "pimess-config-"));
@@ -17,4 +17,9 @@ test("persists and reloads the initialized chat", () => {
   } finally {
     rmSync(dir, { recursive: true, force: true });
   }
+});
+
+test("reports whether startup can connect to a configured chat", () => {
+  assert.equal(isChatConfigured({ chatId: null }), false);
+  assert.equal(isChatConfigured({ chatId: 42 }), true);
 });

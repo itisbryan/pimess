@@ -3,7 +3,7 @@ import { Type } from "typebox";
 import { spawn } from "node:child_process";
 import { basename } from "node:path";
 import { fileURLToPath } from "node:url";
-import { config } from "./config.mjs";
+import { config, isChatConfigured } from "./config.mjs";
 import { PimessClient } from "./client.mjs";
 
 const routerEntry = fileURLToPath(new URL("../bin/pimess.mjs", import.meta.url));
@@ -51,6 +51,9 @@ export default function pimess(pi: ExtensionAPI) {
   let project = basename(process.cwd());
 
   async function connect(ctx: ExtensionContext) {
+    if (!isChatConfigured(settings)) {
+      throw new Error("pimess chat is not initialized; run /pimess init <phone-or-apple-id>");
+    }
     if (client) return client;
     let lastError: unknown;
     for (let attempt = 0; attempt < 20; attempt += 1) {
@@ -92,6 +95,10 @@ export default function pimess(pi: ExtensionAPI) {
   pi.on("session_start", async (_event, ctx) => {
     sessionId = ctx.sessionManager.getSessionId();
     project = basename(ctx.cwd);
+    if (!isChatConfigured(settings)) {
+      ctx.ui.notify("pimess is not initialized; run /pimess init <phone-or-apple-id>", "info");
+      return;
+    }
     try {
       await register(ctx);
     } catch (error) {
@@ -150,6 +157,10 @@ export default function pimess(pi: ExtensionAPI) {
           client?.close();
           client = null;
           ctx.ui.notify(result.stdout.trim() || "pimess chat initialized; run /pimess on", "info");
+          return;
+        }
+        if (command === "status" && !isChatConfigured(settings)) {
+          ctx.ui.notify("pimess is not initialized; run /pimess init <phone-or-apple-id>", "info");
           return;
         }
         if (command === "alias") {

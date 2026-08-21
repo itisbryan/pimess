@@ -26,6 +26,10 @@ export function savePimessConfig(file, value) {
   renameSync(temporary, file);
 }
 
+export function isChatConfigured(value) {
+  return Number.isInteger(value?.chatId) && value.chatId > 0;
+}
+
 export function config() {
   const saved = loadPimessConfig();
   const envChatId = Number(process.env.PIMESS_CHAT_ID);
