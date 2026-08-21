@@ -28,7 +28,7 @@ Inside Pi, explicitly approve the recipient:
 /pimess init +15551234567
 ```
 
-`pimess` creates or locates the Messages conversation and persists the resulting chat ID under `~/.pi/agent/pimess/config.json`. If the installed `imsg` requires the bridge for chat creation, run `imsg launch` once first. You can also configure an existing chat manually with `PIMESS_CHAT_ID=42`.
+`pimess` sends a normal iMessage to create or locate the Messages conversation, then persists the resulting chat ID under `~/.pi/agent/pimess/config.json`. This does not require `imsg launch`, SIP changes, or private framework injection. You can also configure an existing chat manually with `PIMESS_CHAT_ID=42`.
 
 Then enable this session:
 

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import { config, savePimessConfig } from "../src/config.mjs";
-import { findChatId, validateRecipient } from "../src/init.mjs";
+import { initializeChat, validateRecipient } from "../src/init.mjs";
 import { ImsgRpc } from "../src/imsg-rpc.mjs";
 import { PimessRouter } from "../src/router.mjs";
 
@@ -14,21 +14,11 @@ async function initChat(recipient) {
   const rpc = new ImsgRpc({ command: process.env.PIMESS_IMSG || "imsg", to: recipient });
   try {
     await rpc.start(() => {}, { watch: false });
-    let created;
-    try {
-      created = await rpc.request("chats.create", {
-        addresses: [recipient],
-        service: "iMessage",
-        name: "PiMess",
-      });
-    } catch (error) {
-      throw new Error(`could not create the chat; run 'imsg launch' first (${error.message})`);
-    }
-    const directId = created?.chat_id ?? created?.chat?.id ?? null;
-    const listed = await rpc.request("chats.list", { limit: 100 });
-    const chatId = Number.isInteger(directId) ? directId : findChatId(listed?.chats, recipient);
-    if (!chatId) throw new Error("Messages created the chat but imsg did not return its chat ID");
-    savePimessConfig(settings.configPath, { chatId, recipient });
+    const chatId = await initializeChat(
+      rpc,
+      recipient,
+      (value) => savePimessConfig(settings.configPath, value),
+    );
     console.log(`pimess: saved chat ${chatId} for ${recipient} to ${settings.configPath}`);
   } finally {
     await rpc.stop();

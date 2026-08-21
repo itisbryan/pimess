@@ -127,7 +127,7 @@ The router strips the control alias from the prompt delivered to Pi but preserve
 /pimess off
 ```
 
-`init` requires explicit user confirmation, creates or locates the recipient conversation through `imsg rpc`, and persists `{chatId, recipient}` under `~/.pi/agent/pimess/config.json`. It may require `imsg launch` when the installed `imsg` exposes chat creation only through its bridge. `on` enables the current session to receive routed messages and, only when explicitly configured, forward settled assistant replies. `off` unregisters delivery without deleting routing history. `status` shows the router, current alias, active sessions, configured chats, and transport health without displaying message contents.
+`init` requires explicit user confirmation, sends a normal iMessage through `imsg rpc` to create or locate the recipient conversation, and persists `{chatId, recipient}` under `~/.pi/agent/pimess/config.json`. It does not require `imsg launch`, SIP changes, or private framework injection. `on` enables the current session to receive routed messages and, only when explicitly configured, forward settled assistant replies. `off` unregisters delivery without deleting routing history. `status` shows the router, current alias, active sessions, configured chats, and transport health without displaying message contents.
 
 ### Failure behavior
 

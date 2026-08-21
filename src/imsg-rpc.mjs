@@ -28,8 +28,8 @@ export class ImsgRpc {
     }
   }
 
-  async send(text) {
-    const params = { text };
+  async send(text, { service = "imessage" } = {}) {
+    const params = { text, service };
     if (this.chatId != null) params.chat_id = this.chatId;
     else if (this.to) params.to = this.to;
     else throw new Error("configure PIMESS_CHAT_ID or PIMESS_TO");
