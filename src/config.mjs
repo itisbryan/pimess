@@ -9,11 +9,11 @@ const configPath = join(stateDir, "config.json");
 export function loadPimessConfig(file = configPath) {
   try {
     const value = JSON.parse(readFileSync(file, "utf8"));
-    if (!Number.isInteger(value.chatId) || value.chatId <= 0) return {};
-    return {
-      chatId: value.chatId,
-      ...(typeof value.recipient === "string" && value.recipient ? { recipient: value.recipient } : {}),
-    };
+    const chatId = Number.isInteger(value.chatId) && value.chatId > 0 ? { chatId: value.chatId } : {};
+    const recipient = typeof value.recipient === "string" && value.recipient ? { recipient: value.recipient } : {};
+    const target = typeof value.target === "string" && value.target ? { target: value.target } : {};
+    if (!Object.keys(chatId).length && !Object.keys(target).length) return {};
+    return { ...chatId, ...recipient, ...target };
   } catch {
     return {};
   }
@@ -45,7 +45,7 @@ export function config() {
     transport: (process.env.PIMESS_TRANSPORT || "photon").toLowerCase(),
     chatId: Number.isInteger(envChatId) && envChatId > 0 ? envChatId : saved.chatId || null,
     to: process.env.PIMESS_TO || saved.recipient || null,
-    target: process.env.PHOTON_TARGET || process.env.PHOTON_HOME_CHANNEL || null,
+    target: process.env.PHOTON_TARGET || process.env.PHOTON_HOME_CHANNEL || saved.target || null,
     projectId: process.env.SPECTRUM_PROJECT_ID || null,
     projectSecret: process.env.SPECTRUM_PROJECT_SECRET || null,
     photonPort: Number(process.env.PHOTON_SIDECAR_PORT || 8790),

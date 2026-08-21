@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import { fileURLToPath } from "node:url";
-import { config, isTransportConfigured, savePimessConfig } from "../src/config.mjs";
+import { config, isTransportConfigured, loadPimessConfig, savePimessConfig } from "../src/config.mjs";
 import { initializeChat, validateRecipient } from "../src/init.mjs";
 import { ImsgRpc } from "../src/imsg-rpc.mjs";
 import { PhotonTransport } from "../src/photon.mjs";
@@ -11,7 +11,10 @@ const settings = config();
 
 async function initChat(recipient) {
   if (settings.transport === "photon") {
-    throw new Error("Photon does not use /pimess init; set SPECTRUM_PROJECT_ID, SPECTRUM_PROJECT_SECRET, and PHOTON_TARGET");
+    if (!recipient || /\s/.test(recipient)) throw new Error("usage: /pimess init <phone-number, Apple ID, or Photon space>");
+    savePimessConfig(settings.configPath, { ...loadPimessConfig(settings.configPath), target: recipient });
+    console.log(`pimess: saved Photon target ${recipient} to ${settings.configPath}`);
+    return;
   }
   if (!validateRecipient(recipient)) {
     throw new Error("recipient must be an E.164 phone number or Apple ID email");

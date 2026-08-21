@@ -38,7 +38,13 @@ Or install it as a Pi package:
 pi install git:github.com/itisbryan/pimess
 ```
 
-Then enable the session:
+Then set the target from inside Pi:
+
+```text
+/pimess init +15551234567
+```
+
+This persists the Photon recipient/space in `~/.pi/agent/pimess/config.json`. Then enable the session:
 
 ```text
 /pimess on
@@ -61,6 +67,7 @@ Then start Pi and use `/pimess on`. This mode requires `imsg` and Messages.app p
 
 ```text
 /pimess status
+/pimess init <phone-number, Apple ID, or Photon space>
 /pimess alias <name>
 /pimess on
 /pimess off

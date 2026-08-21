@@ -153,9 +153,8 @@ export default function pimess(pi: ExtensionAPI) {
       const [command, value] = (args || "").trim().split(/\s+/, 2);
       try {
         if (command === "init") {
-          if (settings.transport === "photon") throw new Error("Photon does not use /pimess init; configure PHOTON_TARGET instead");
-          if (!value) throw new Error("usage: /pimess init <phone-or-apple-id>");
-          const ok = await ctx.ui.confirm("Initialize iMessage chat?", `Recipient: ${value}`);
+          if (!value) throw new Error("usage: /pimess init <phone-number, Apple ID, or Photon space>");
+          const ok = await ctx.ui.confirm(settings.transport === "photon" ? "Set Photon target?" : "Initialize iMessage chat?", `Recipient: ${value}`);
           if (!ok) return;
           const result = await runInit(value);
           if (result.code !== 0) throw new Error(result.stderr.trim() || result.stdout.trim() || "chat initialization failed");

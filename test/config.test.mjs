@@ -24,6 +24,17 @@ test("reports whether startup can connect to a configured chat", () => {
   assert.equal(isChatConfigured({ chatId: 42 }), true);
 });
 
+test("loads a persisted Photon target without a chat ID", () => {
+  const dir = mkdtempSync(join(tmpdir(), "pimess-photon-config-"));
+  const file = join(dir, "config.json");
+  try {
+    savePimessConfig(file, { target: "+15551234567" });
+    assert.deepEqual(loadPimessConfig(file), { target: "+15551234567" });
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
+});
+
 test("recognizes a configured Photon transport", () => {
   assert.equal(isTransportConfigured({ transport: "photon", projectId: "p", projectSecret: "s", target: "+15551234567" }), true);
   assert.equal(isTransportConfigured({ transport: "photon", projectId: "p", projectSecret: "", target: "+15551234567" }), false);
