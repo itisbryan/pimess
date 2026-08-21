@@ -1,0 +1,21 @@
+{
+  "name": "pimess",
+  "version": "0.1.0",
+  "description": "Two-way iMessage routing for multiple Pi sessions",
+  "type": "module",
+  "license": "MIT",
+  "keywords": ["pi-package", "pi-extension", "imessage", "macos"],
+  "bin": {
+    "pimess": "./bin/pimess.mjs"
+  },
+  "files": ["bin", "src", "README.md", "LICENSE", "docs"],
+  "scripts": {
+    "test": "node --test test/*.test.mjs"
+  },
+  "dependencies": {
+    "typebox": "^1.3.7"
+  },
+  "pi": {
+    "extensions": ["./src/extension.ts"]
+  }
+}
