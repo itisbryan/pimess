@@ -6,21 +6,19 @@ A Pi extension and shared local router for sending and receiving iMessages acros
 
 `pimess` uses **Photon/Spectrum by default**, so PiMess has its own iMessage identity instead of appearing as a self-chat.
 
-Photon setup requires:
+Photon setup requires a Photon account and an E.164 phone number to register. The setup command provisions or reuses the project, creates the Spectrum secret, registers the phone, and saves the assigned line. On shared/free lines, text the assigned Photon line from that phone first.
 
-- A Photon project with Spectrum enabled.
-- `SPECTRUM_PROJECT_ID`.
-- `SPECTRUM_PROJECT_SECRET`.
-- The Photon-assigned iMessage line.
-- The recipient’s phone number or Photon space as `PHOTON_TARGET`.
-- The recipient must text the assigned Photon line first when using a shared/free line.
+```bash
+cd /Users/itisbryan/Desktop/personal/pimess
+npm install
+node bin/pimess.mjs photon setup --phone +15551234567
+```
 
-Configure the environment before starting Pi:
+PiMess stores runtime credentials in `~/.pi/agent/pimess/photon.json` with mode `0600`. You can instead provide them explicitly:
 
 ```bash
 export SPECTRUM_PROJECT_ID="..."
 export SPECTRUM_PROJECT_SECRET="..."
-export PHOTON_TARGET="+15551234567"
 export PIMESS_ALIAS=api
 ```
 
@@ -38,7 +36,7 @@ Or install it as a Pi package:
 pi install git:github.com/itisbryan/pimess
 ```
 
-Then set the target from inside Pi:
+Then set or change the target from inside Pi:
 
 ```text
 /pimess init +15551234567

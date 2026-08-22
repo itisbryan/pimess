@@ -6,6 +6,21 @@ const agentDir = process.env.PI_CODING_AGENT_DIR || join(os.homedir(), ".pi", "a
 const stateDir = join(agentDir, "pimess");
 const configPath = join(stateDir, "config.json");
 
+export function loadPhotonConfig(file = join(stateDir, "photon.json")) {
+  try {
+    const value = JSON.parse(readFileSync(file, "utf8"));
+    return {
+      ...(typeof value.projectId === "string" && value.projectId ? { projectId: value.projectId } : {}),
+      ...(typeof value.projectSecret === "string" && value.projectSecret ? { projectSecret: value.projectSecret } : {}),
+      ...(typeof value.target === "string" && value.target ? { target: value.target } : {}),
+      ...(typeof value.assignedPhone === "string" && value.assignedPhone ? { assignedPhone: value.assignedPhone } : {}),
+      ...(typeof value.dashboardToken === "string" && value.dashboardToken ? { dashboardToken: value.dashboardToken } : {}),
+    };
+  } catch {
+    return {};
+  }
+}
+
 export function loadPimessConfig(file = configPath) {
   try {
     const value = JSON.parse(readFileSync(file, "utf8"));
@@ -39,16 +54,18 @@ export function isTransportConfigured(value) {
 
 export function config() {
   const saved = loadPimessConfig();
+  const savedPhoton = loadPhotonConfig();
   const envChatId = Number(process.env.PIMESS_CHAT_ID);
   return {
     alias: process.env.PIMESS_ALIAS || basename(process.cwd()).toLowerCase().replace(/[^a-z0-9_-]/g, "-").slice(0, 32) || "pi",
     transport: (process.env.PIMESS_TRANSPORT || "photon").toLowerCase(),
     chatId: Number.isInteger(envChatId) && envChatId > 0 ? envChatId : saved.chatId || null,
     to: process.env.PIMESS_TO || saved.recipient || null,
-    target: process.env.PHOTON_TARGET || process.env.PHOTON_HOME_CHANNEL || saved.target || null,
-    projectId: process.env.SPECTRUM_PROJECT_ID || null,
-    projectSecret: process.env.SPECTRUM_PROJECT_SECRET || null,
+    target: process.env.PHOTON_TARGET || process.env.PHOTON_HOME_CHANNEL || saved.target || savedPhoton.target || null,
+    projectId: process.env.SPECTRUM_PROJECT_ID || savedPhoton.projectId || null,
+    projectSecret: process.env.SPECTRUM_PROJECT_SECRET || savedPhoton.projectSecret || null,
     configPath,
+    photonConfigPath: join(stateDir, "photon.json"),
     socketPath: process.env.PIMESS_SOCKET || join(stateDir, "router.sock"),
     statePath: process.env.PIMESS_STATE || join(stateDir, "state.json"),
     forwardSettled: /^(1|true|yes|on)$/i.test(process.env.PIMESS_FORWARD_SETTLED || ""),
