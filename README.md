@@ -67,13 +67,12 @@ Then start Pi and use `/pimess on`. This mode requires `imsg` and Messages.app p
 /pimess status
 /pimess init <phone-number, Apple ID, or Photon space>
 /pimess alias <name>
-/pimess on
-/pimess on forward
+/pimess on       # receive and forward replies
 /pimess off
-/pimess forward on|off
+/pimess forward on|off   # override forwarding while receiving remains enabled
 ```
 
-`/pimess on` enables inbound delivery for the current session. Settled-reply forwarding is separately controlled by `PIMESS_FORWARD_SETTLED=1` and `/pimess forward on`.
+`/pimess on` enables inbound delivery and settled-reply forwarding. Use `/pimess forward off` to keep receiving while suppressing automatic replies.
 
 ## Routing
 

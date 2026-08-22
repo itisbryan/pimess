@@ -105,7 +105,7 @@ The store is append/update safe and bounded. Old records are pruned after a conf
 - The router prefers `imsg rpc` tracked sends with a caller-owned correlation ID when the installed `imsg` exposes that method.
 - If tracked sends are unavailable, the router uses ordinary `send` and records the returned GUID/ID when observable.
 - Recipient/chat targets are configured and allowlisted; arbitrary recipient sends are rejected by default.
-- The extension defaults to disabled automatic forwarding. Explicit tool sends remain confirmation-gated.
+- The extension defaults to disabled automatic forwarding until `/pimess on`; explicit tool sends remain confirmation-gated.
 
 ### Inbound behavior
 
@@ -145,7 +145,7 @@ The router strips the control alias from the prompt delivered to Pi but preserve
 - Store router state under the user’s Pi configuration directory with owner-only permissions.
 - Validate aliases, socket paths, and message sizes.
 - Keep recipients in an explicit allowlist.
-- Require a Pi UI confirmation before enabling automatic forwarding.
+- Require an explicit Pi command before enabling automatic forwarding.
 - Never log message bodies, credentials, or full phone numbers.
 
 ## Acceptance
