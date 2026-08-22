@@ -7,7 +7,6 @@ import { config, isTransportConfigured } from "./config.mjs";
 import { PimessClient } from "./client.mjs";
 
 const routerEntry = fileURLToPath(new URL("../bin/pimess.mjs", import.meta.url));
-const photonDir = fileURLToPath(new URL("../photon", import.meta.url));
 
 function sleep(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -80,7 +79,7 @@ export default function pimess(pi: ExtensionAPI) {
           const child = spawn(process.execPath, [routerEntry, "router"], {
             detached: true,
             stdio: "ignore",
-            env: { ...process.env, PIMESS_PHOTON_DIR: settings.photonDir || photonDir },
+            env: process.env,
           });
           child.unref();
         }

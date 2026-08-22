@@ -50,7 +50,7 @@ This persists the Photon recipient/space in `~/.pi/agent/pimess/config.json`. Th
 /pimess on
 ```
 
-Photon runs a supervised Node sidecar using the pinned `spectrum-ts` dependency. No local Messages.app account, SIP changes, or `imsg launch` are required for Photon.
+PiMess runs the official pinned `spectrum-ts` SDK in its managed router process, using Photon Cloud project credentials for the remote iMessage provider. No local Messages.app account, SIP changes, or `imsg launch` are required for Photon.
 
 ### Local `imsg` fallback
 

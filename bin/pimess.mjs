@@ -1,5 +1,4 @@
 #!/usr/bin/env node
-import { fileURLToPath } from "node:url";
 import { config, isTransportConfigured, loadPimessConfig, savePimessConfig } from "../src/config.mjs";
 import { initializeChat, validateRecipient } from "../src/init.mjs";
 import { ImsgRpc } from "../src/imsg-rpc.mjs";
@@ -48,14 +47,11 @@ if (command === "init") {
     process.exit(2);
   }
 
-  const photonDir = settings.photonDir || fileURLToPath(new URL("../photon", import.meta.url));
   const transport = settings.transport === "photon"
     ? new PhotonTransport({
         projectId: settings.projectId,
         projectSecret: settings.projectSecret,
         target: settings.target,
-        port: settings.photonPort,
-        sidecarDir: photonDir,
       })
     : new ImsgRpc({
         command: process.env.PIMESS_IMSG || "imsg",

@@ -48,8 +48,6 @@ export function config() {
     target: process.env.PHOTON_TARGET || process.env.PHOTON_HOME_CHANNEL || saved.target || null,
     projectId: process.env.SPECTRUM_PROJECT_ID || null,
     projectSecret: process.env.SPECTRUM_PROJECT_SECRET || null,
-    photonPort: Number(process.env.PHOTON_SIDECAR_PORT || 8790),
-    photonDir: process.env.PIMESS_PHOTON_DIR || null,
     configPath,
     socketPath: process.env.PIMESS_SOCKET || join(stateDir, "router.sock"),
     statePath: process.env.PIMESS_STATE || join(stateDir, "state.json"),

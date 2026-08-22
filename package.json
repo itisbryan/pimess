@@ -8,7 +8,7 @@
   "bin": {
     "pimess": "./bin/pimess.mjs"
   },
-  "files": ["bin", "src", "photon", "README.md", "LICENSE", "docs"],
+  "files": ["bin", "src", "README.md", "LICENSE", "docs"],
   "scripts": {
     "test": "node --test test/*.test.mjs"
   },

@@ -21,7 +21,7 @@ The Pi extension is a client of the router. It registers the current session, ex
 ### In scope
 
 - Public Pi package/repository named `pimess`.
-- Photon/Spectrum transport through a supervised Node sidecar by default.
+- Photon/Spectrum transport through the managed Node router by default.
 - Optional local macOS transport through `imsg rpc`.
 - One router process per user/Mac.
 - Pi session registration with a human alias and stable Pi session ID.
@@ -57,7 +57,7 @@ Pi extension (one instance per session)
 pimess router (one per Mac)
         │ one supervised child
         ▼
-Photon/Spectrum sidecar (default) or imsg rpc
+Photon/Spectrum SDK (default) or imsg rpc
         │
         ▼
 iMessage
@@ -128,7 +128,7 @@ The router strips the control alias from the prompt delivered to Pi but preserve
 /pimess off
 ```
 
-Photon is configured with `SPECTRUM_PROJECT_ID` and `SPECTRUM_PROJECT_SECRET`; `/pimess init <target>` persists the recipient phone, Apple ID, or Photon space as `PHOTON_TARGET` in `~/.pi/agent/pimess/config.json`. The Photon sidecar uses the assigned Photon line and does not require local Messages.app or SIP changes. The optional imsg transport retains `/pimess init <phone-or-apple-id>` for creating or locating a local Messages conversation. That local path does not require `imsg launch`. `on` enables the current session to receive routed messages and, only when explicitly configured, forward settled assistant replies. `off` unregisters delivery without deleting routing history. `status` shows the router, current alias, active sessions, configured chats, and transport health without displaying message contents.
+Photon is configured with `SPECTRUM_PROJECT_ID` and `SPECTRUM_PROJECT_SECRET`; `/pimess init <target>` persists the recipient phone, Apple ID, or Photon space as `PHOTON_TARGET` in `~/.pi/agent/pimess/config.json`. The Photon SDK uses the assigned Photon line and does not require local Messages.app or SIP changes. The optional imsg transport retains `/pimess init <phone-or-apple-id>` for creating or locating a local Messages conversation. That local path does not require `imsg launch`. `on` enables the current session to receive routed messages and, only when explicitly configured, forward settled assistant replies. `off` unregisters delivery without deleting routing history. `status` shows the router, current alias, active sessions, configured chats, and transport health without displaying message contents.
 
 ### Failure behavior
 
@@ -150,7 +150,7 @@ Photon is configured with `SPECTRUM_PROJECT_ID` and `SPECTRUM_PROJECT_SECRET`; `
 
 ## Acceptance
 
-1. Photon configuration starts the sidecar with project credentials and a target space; optional imsg initialization creates or locates a local recipient chat after confirmation and persists its chat ID.
+1. Photon configuration starts the Spectrum SDK with project credentials and a target space; optional imsg initialization creates or locates a local recipient chat after confirmation and persists its chat ID.
 2. Two Pi sessions can register as `api` and `docs` simultaneously.
 3. Each outbound message visibly identifies its alias and creates a routing record.
 4. An inline reply to an `api` message is delivered only to `api`.
