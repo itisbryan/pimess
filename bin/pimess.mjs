@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { config, isTransportConfigured, loadPimessConfig, savePimessConfig } from "../src/config.mjs";
+import { config, isTransportConfigured, loadPhotonConfig, loadPimessConfig, savePimessConfig } from "../src/config.mjs";
 import { initializeChat, validateRecipient } from "../src/init.mjs";
 import { ImsgRpc } from "../src/imsg-rpc.mjs";
 import { PhotonTransport } from "../src/photon.mjs";
@@ -17,8 +17,8 @@ function flag(args, name, fallback = null) {
 async function initChat(recipient) {
   if (settings.transport === "photon") {
     if (!recipient || /\s/.test(recipient)) throw new Error("usage: /pimess init <phone-number, Apple ID, or Photon space>");
-    savePimessConfig(settings.configPath, { ...loadPimessConfig(settings.configPath), target: recipient });
-    console.log(`pimess: saved Photon target ${recipient} to ${settings.configPath}`);
+    savePimessConfig(settings.photonConfigPath, { ...loadPhotonConfig(settings.photonConfigPath), target: recipient });
+    console.log(`pimess: saved Photon target ${recipient} to ${settings.photonConfigPath}`);
     return;
   }
   if (!validateRecipient(recipient)) {

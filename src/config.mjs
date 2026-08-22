@@ -56,12 +56,13 @@ export function config() {
   const saved = loadPimessConfig();
   const savedPhoton = loadPhotonConfig();
   const envChatId = Number(process.env.PIMESS_CHAT_ID);
+  const transport = (process.env.PIMESS_TRANSPORT || "photon").toLowerCase();
   return {
     alias: process.env.PIMESS_ALIAS || basename(process.cwd()).toLowerCase().replace(/[^a-z0-9_-]/g, "-").slice(0, 32) || "pi",
-    transport: (process.env.PIMESS_TRANSPORT || "photon").toLowerCase(),
+    transport,
     chatId: Number.isInteger(envChatId) && envChatId > 0 ? envChatId : saved.chatId || null,
     to: process.env.PIMESS_TO || saved.recipient || null,
-    target: process.env.PHOTON_TARGET || process.env.PHOTON_HOME_CHANNEL || saved.target || savedPhoton.target || null,
+    target: process.env.PHOTON_TARGET || process.env.PHOTON_HOME_CHANNEL || (transport === "photon" ? savedPhoton.target || saved.target : saved.target || savedPhoton.target) || null,
     projectId: process.env.SPECTRUM_PROJECT_ID || savedPhoton.projectId || null,
     projectSecret: process.env.SPECTRUM_PROJECT_SECRET || savedPhoton.projectSecret || null,
     configPath,
