@@ -39,7 +39,8 @@ function photonUserContent(message: any): any {
     if (content.type !== "attachment" || !content.data || !String(content.mimeType || "").startsWith("image/")) return;
     parts.push({
       type: "image",
-      source: { type: "base64", mediaType: content.mimeType, data: content.data },
+      mimeType: content.mimeType,
+      data: content.data,
     });
   };
   visit(message.content);
