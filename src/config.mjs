@@ -62,7 +62,7 @@ export function config() {
     transport,
     chatId: Number.isInteger(envChatId) && envChatId > 0 ? envChatId : saved.chatId || null,
     to: process.env.PIMESS_TO || saved.recipient || null,
-    target: process.env.PHOTON_TARGET || process.env.PHOTON_HOME_CHANNEL || (transport === "photon" ? savedPhoton.target || saved.target : saved.target || savedPhoton.target) || null,
+    target: process.env.PHOTON_TARGET || (transport === "photon" ? savedPhoton.target || saved.target : saved.target || savedPhoton.target) || null,
     projectId: process.env.SPECTRUM_PROJECT_ID || savedPhoton.projectId || null,
     projectSecret: process.env.SPECTRUM_PROJECT_SECRET || savedPhoton.projectSecret || null,
     configPath,
