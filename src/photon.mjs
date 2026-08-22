@@ -1,4 +1,4 @@
-import { Spectrum, text as spectrumText } from "spectrum-ts";
+import { Spectrum, markdown as spectrumMarkdown, richlink as spectrumRichlink } from "spectrum-ts";
 import { imessage } from "spectrum-ts/providers/imessage";
 
 export class PhotonTransport {
@@ -27,7 +27,7 @@ export class PhotonTransport {
   async send(value) {
     const space = await this.#resolveSpace(this.target);
     try {
-      const sent = await space.send(spectrumText(value));
+      const sent = await space.send(outboundContent(value));
       return { guid: sent?.id || null, chat_id: this.target };
     } catch (error) {
       if (/target not allowed/i.test(error.message)) {
@@ -84,6 +84,11 @@ export class PhotonTransport {
       if (this.running) console.error(`pimess Photon inbound stream stopped: ${error.message}`);
     }
   }
+}
+
+function outboundContent(value) {
+  const text = String(value).trim();
+  return /^https?:\/\/\S+$/.test(text) ? spectrumRichlink(text) : spectrumMarkdown(value);
 }
 
 function textFromContent(content) {
