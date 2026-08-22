@@ -27,6 +27,25 @@ function runInit(recipient: string) {
   });
 }
 
+function photonUserContent(message: any): any {
+  const text = typeof message.text === "string" ? message.text.trim() : "";
+  const parts: any[] = text ? [{ type: "text", text }] : [];
+  const visit = (content: any) => {
+    if (!content || typeof content !== "object") return;
+    if (content.type === "group") {
+      for (const item of content.items || []) visit(item?.content);
+      return;
+    }
+    if (content.type !== "attachment" || !content.data || !String(content.mimeType || "").startsWith("image/")) return;
+    parts.push({
+      type: "image",
+      source: { type: "base64", mediaType: content.mimeType, data: content.data },
+    });
+  };
+  visit(message.content);
+  return parts.length ? parts : null;
+}
+
 function assistantText(ctx: ExtensionContext): string | null {
   const entries = ctx.sessionManager.getBranch() as Array<any>;
   for (let index = entries.length - 1; index >= 0; index -= 1) {
@@ -61,10 +80,10 @@ export default function pimess(pi: ExtensionAPI) {
     for (let attempt = 0; attempt < 20; attempt += 1) {
       try {
         client = await new PimessClient(settings.socketPath, async (message) => {
-          const text = typeof message.text === "string" ? message.text.trim() : "";
-          if (!text) return;
+          const content = photonUserContent(message);
+          if (!content) return;
           try {
-            await pi.sendUserMessage(text, { deliverAs: "followUp" });
+            await pi.sendUserMessage(content, { deliverAs: "followUp" });
           } catch (error) {
             ctx.ui.notify(`pimess could not deliver inbound message: ${error}`, "error");
           }
