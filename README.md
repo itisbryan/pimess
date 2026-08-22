@@ -68,6 +68,7 @@ Then start Pi and use `/pimess on`. This mode requires `imsg` and Messages.app p
 /pimess init <phone-number, Apple ID, or Photon space>
 /pimess alias <name>
 /pimess on
+/pimess on forward
 /pimess off
 /pimess forward on|off
 ```

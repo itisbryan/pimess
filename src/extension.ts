@@ -198,8 +198,9 @@ export default function pimess(pi: ExtensionAPI) {
         }
         if (command === "on" || command === "off") {
           enabled = command === "on";
+          if (command === "on" && value === "forward") forwardSettled = true;
           await register(ctx);
-          ctx.ui.notify(`pimess ${enabled ? "enabled" : "disabled"} for ${alias}`, "info");
+          ctx.ui.notify(`pimess ${enabled ? "enabled" : "disabled"} for ${alias}${forwardSettled && enabled ? "; forwarding on" : ""}`, "info");
           return;
         }
         if (command === "forward" && (value === "on" || value === "off")) {
