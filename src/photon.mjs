@@ -26,8 +26,15 @@ export class PhotonTransport {
 
   async send(value) {
     const space = await this.#resolveSpace(this.target);
-    const sent = await space.send(spectrumText(value));
-    return { guid: sent?.id || null, chat_id: this.target };
+    try {
+      const sent = await space.send(spectrumText(value));
+      return { guid: sent?.id || null, chat_id: this.target };
+    } catch (error) {
+      if (/target not allowed/i.test(error.message)) {
+        throw new Error("Photon shared lines can only reply after the target texts the assigned Photon line; text it first, then retry");
+      }
+      throw error;
+    }
   }
 
   async stop() {
@@ -47,11 +54,22 @@ export class PhotonTransport {
     return space;
   }
 
+  #rememberInboundSpace(space, message) {
+    const ids = [space?.id, message?.space?.id];
+    for (const id of ids) {
+      if (typeof id !== "string" || !id) continue;
+      this.spaces.set(id, space);
+      const match = /^any;-;(.+)$/.exec(id);
+      if (match) this.spaces.set(match[1], space);
+    }
+  }
+
   async #consume(onMessage) {
     try {
       for await (const [space, message] of this.app.messages) {
         if (!this.running) return;
         if (message?.direction && message.direction !== "inbound") continue;
+        this.#rememberInboundSpace(space, message);
         const value = textFromContent(message?.content);
         if (!space?.id || !value) continue;
         onMessage({
